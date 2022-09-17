@@ -1,0 +1,3 @@
+C:\Users\Administrator\Downloads\cmake-3.23.0-rc1-windows-x86_64\bin\cmake.exe -E rm -f CMakeFiles\ffmpeg.dir/objects.a
+D:\Software\mingw64\bin\ar.exe qc CMakeFiles\ffmpeg.dir/objects.a @CMakeFiles\ffmpeg.dir\objects1.rsp
+D:\Software\mingw64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\ffmpeg.dir/objects.a -Wl,--no-whole-archive -o ffmpeg.exe -Wl,--out-implib,libffmpeg.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\ffmpeg.dir\linklibs.rsp

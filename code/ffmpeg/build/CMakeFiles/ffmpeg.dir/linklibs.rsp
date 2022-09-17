@@ -1,0 +1,1 @@
+  -LD:/Study/code/ffmpeg/lib/ffmpeg/lib  -lavformat -lavcodec -lavdevice -lavfilter -lavutil -lpostproc -lswresample -lswscale -Wl,-Bstatic -lwinmm -Wl,-Bdynamic -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

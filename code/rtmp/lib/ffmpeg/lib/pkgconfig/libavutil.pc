@@ -1,0 +1,14 @@
+prefix=/home/caixuefeng/ffmpeg
+exec_prefix=${prefix}
+libdir=/home/caixuefeng/ffmpeg/lib
+includedir=/home/caixuefeng/ffmpeg/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 57.21.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil 
+Libs.private: -lm -luser32 -lbcrypt -latomic
+Cflags: -I${includedir}

@@ -1,0 +1,7 @@
+[
+{
+  "directory": "D:/Study/code/rtmp/build",
+  "command": "D:\\Software\\mingw64\\bin\\x86_64-w64-mingw32-g++.exe  @CMakeFiles/ffmpeg.dir/includes_CXX.rsp -g -o CMakeFiles\\ffmpeg.dir\\main.cpp.obj -c D:\\Study\\code\\rtmp\\main.cpp",
+  "file": "D:/Study/code/rtmp/main.cpp"
+}
+]

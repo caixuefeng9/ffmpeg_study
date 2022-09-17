@@ -1,0 +1,14 @@
+prefix=/home/caixuefeng/ffmpeg
+exec_prefix=${prefix}
+libdir=/home/caixuefeng/ffmpeg/lib
+includedir=/home/caixuefeng/ffmpeg/include
+
+Name: libavdevice
+Description: FFmpeg device handling library
+Version: 59.5.100
+Requires: 
+Requires.private: libavfilter >= 8.27.100, libswscale >= 6.5.100, libpostproc >= 56.4.100, libavformat >= 59.17.101, libavcodec >= 59.20.100, libswresample >= 4.4.100, libavutil >= 57.21.100
+Conflicts:
+Libs: -L${libdir}  -lavdevice 
+Libs.private: -lpsapi -lole32 -lstrmiids -luuid -loleaut32 -lshlwapi -lgdi32 -lm -latomic -lvfw32 -L/home/caixuefeng/libSDL2/lib -lmingw32 -lSDL2main -lSDL2
+Cflags: -I${includedir}

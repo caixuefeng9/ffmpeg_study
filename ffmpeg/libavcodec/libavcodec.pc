@@ -1,0 +1,14 @@
+prefix=/home/caixuefeng/ffmpeg
+exec_prefix=${prefix}
+libdir=/home/caixuefeng/ffmpeg/lib
+includedir=/home/caixuefeng/ffmpeg/include
+
+Name: libavcodec
+Description: FFmpeg codec library
+Version: 59.20.100
+Requires: 
+Requires.private: libswresample >= 4.4.100, libavutil >= 57.21.100
+Conflicts:
+Libs: -L${libdir}  -lavcodec 
+Libs.private: -lm -latomic -L/home/caixuefeng/libaac/lib -lfdk-aac -L/home/caixuefeng/libx264/lib -lx264 -static -lmfplat -lmfuuid -lole32 -lstrmiids -lole32 -luser32
+Cflags: -I${includedir}

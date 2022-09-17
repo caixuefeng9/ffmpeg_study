@@ -1,0 +1,7 @@
+LIBAVFORMAT_59 {
+    global:
+        av*;
+		ffurl*;
+    local:
+        *;
+};
