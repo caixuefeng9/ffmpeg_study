@@ -15,6 +15,10 @@ typedef struct {
     ElementType *data;
 } Queue;
 
+#define BLOCK_SIZE 4096000
+static uint8_t audio_buf[BLOCK_SIZE];
+static Queue* audio_queue = NULL;
+
 Queue *queue_init(ElementType *buf, uint32_t size)
 {
     Queue* q = (Queue *)malloc(sizeof(Queue));
@@ -39,6 +43,11 @@ int is_empty_queue(Queue *q)
 int is_full_queue(Queue *q)
 {
     return (q->len == q->size);
+}
+
+int get_queue_size(Queue* q)
+{
+    return q->len;
 }
 
 int queue_push(Queue *q, ElementType *data, uint32_t len)
@@ -96,14 +105,116 @@ int queue_pop(Queue *q, ElementType *data, uint32_t len)
     }
 }
 
+void queue_free()
+{
+
+}
+
+//callback function for audio devcie
+void read_audio_data(void* udata, uint8_t* stream, int len) 
+{
+    uint8_t buf[4096];
+    SDL_mutex* lock;
+    
+    if (is_empty_queue(audio_queue)) {
+        return;
+    }
+
+    SDL_memset(stream, 0, len);
+
+    len = (len < get_queue_size(audio_queue)) ? len : get_queue_size(audio_queue);
+    printf("len=%d\n", len);
+
+    //SDL_mutexP(lock);
+    queue_pop(audio_queue, buf, len);
+    //SDL_mutexV(lock);
+
+    SDL_MixAudio(stream, buf, len, SDL_MIX_MAXVOLUME);
+}
+
 int main(int argc, char *argv[])
 {
-	int ret = -1;
+	int ret = -1, status;
+    FILE* audio_fd = NULL;
+    uint8_t* src_patch = NULL;
+    SDL_AudioSpec spec;
+    uint8_t buf[4096];
+    uint32_t len;
+    SDL_mutex* lock;
 
-	if (SDL_Init(SDL_INIT_AUDIO)) {
-		SDL_Log("Failet to initail!");
+    if (argc < 2) {
+        printf("The count of params should be more than two!");
+    }
+
+    src_patch = argv[1];
+
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+		SDL_Log("Failet to initailize SDL - %s\n", SDL_GetError());
 		return ret;
 	}
+ 
+    audio_fd = fopen(src_patch, "rb");
+    if (!audio_fd) {
+        fprintf(stderr, "Failed to open pcm file!\n");
+        goto __FAIL;
+    }
+
+    audio_queue = queue_init(audio_buf, BLOCK_SIZE);
+    if (!audio_queue) {
+        fprintf(stderr, "Failed to init audio_queue!\n");
+        goto __FAIL;
+    }
+
+    spec.freq = 48000;
+    spec.format = AUDIO_S16SYS;
+    spec.channels = 2;
+    spec.silence = 0;
+    spec.samples = 1024;
+    spec.callback = read_audio_data;
+    spec.userdata = NULL;
+
+    if (SDL_OpenAudio(&spec, NULL)) {
+        fprintf(stderr, "Failed to open audio device, %s\n", SDL_GetError());
+        goto __FAIL;
+    }
+
+    SDL_PauseAudio(0);
+
+    do {
+        len = fread(buf, 1, 4096, audio_fd);
+        fprintf(stderr, "read size is %zu\n", len);
+        printf("read size is %zu\n", len);
+        fflush(stdout);
+        while (1) {
+            //SDL_mutexP(lock);
+            status = queue_push(audio_queue, buf, len);
+            //SDL_mutexV(lock);
+            if (status == CQ_OK)
+                break;
+
+            SDL_Delay(1);
+        }
+    } while (len != 0);
+
+    while (1) {
+
+        if (is_empty_queue(audio_queue)) {
+            SDL_CloseAudio();
+            break;
+        }
+        SDL_Delay(10);
+    }
+
+__FAIL:
+    if (audio_fd) {
+        fclose(audio_fd);
+    }
+
+    if (audio_queue) {
+        queue_free();
+    }
+    fflush(stdout);
+    fflush(stderr);
 
 	SDL_Quit();
 	return 0;
